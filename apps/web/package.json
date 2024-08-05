@@ -1,27 +1,27 @@
 {
-  "name": "web",
+  "name": "@qiqiao/web",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "scripts": {
-    "dev": "next dev --turbo",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint"
+    "build": "nuxt build",
+    "ci": "nuxt build",
+    "dev": "nuxt dev",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare"
   },
   "dependencies": {
-    "@repo/ui": "*",
-    "react": "19.0.0-rc-f994737d14-20240522",
-    "react-dom": "19.0.0-rc-f994737d14-20240522",
-    "next": "15.0.0-rc.0"
+    "@iconify-json/mdi": "^1.1.67",
+    "@nuxt/content": "^2.13.1",
+    "@nuxt/image": "^1.7.0",
+    "@nuxt/ui": "^2.17.0",
+    "@types/markdown-it": "^14.1.1",
+    "markdown-it": "^14.1.0",
+    "nuxt": "^3.12.3",
+    "vue": "latest"
   },
   "devDependencies": {
-    "@repo/eslint-config": "*",
-    "@repo/typescript-config": "*",
-    "typescript": "^5",
-    "@types/node": "^20",
-    "@types/react": "^18",
-    "@types/react-dom": "^18",
-    "eslint": "^8",
-    "eslint-config-next": "15.0.0-rc.0"
+    "@types/node": "^20.14.10"
   }
 }
