@@ -47,29 +47,14 @@
 
 <script setup lang="ts">
 import type { NavigationTreeLink } from "~/components/NavigationTree/index.vue";
-import type { TreeNode } from "~/server/api/post_list";
 
-const { data: postList } = await useFetch(`/api/post_list`);
-const navigationTree = traversePostList(postList.value || []);
-
-/**
- * 遍历postList，需要下钻
- * @param postList
- */
-function traversePostList(postList: TreeNode[]) {
-  const result: NavigationTreeLink[] = [];
-
-  for (const post of postList) {
-    const node: NavigationTreeLink = {
-      label: post.name,
-      replace: true,
-      to: `/posts${post.path}`.replace(/\.md$/, ""),
+const { data: articles } = await useFetch(`/api/article/list`);
+const navigationTree: NavigationTreeLink[] = (articles.value || []).map(
+  (article) => {
+    return {
+      label: article.title,
+      to: `/article/${article.id}`,
     };
-    result.push(node);
-    if (post.children) {
-      node.children = traversePostList(post.children);
-    }
   }
-  return result;
-}
+);
 </script>

@@ -33,8 +33,8 @@
           </UButton>
         </div>
         <div style="display: flex">
-          <UButton variant="link" to="/posts/projects">个人作品</UButton>
-          <UButton variant="link" to="/posts/notes">黑糖笔记</UButton>
+          <UButton variant="link">个人作品</UButton>
+          <UButton variant="link" to="/article">黑糖笔记</UButton>
         </div>
       </div>
     </main>

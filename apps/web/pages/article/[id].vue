@@ -11,13 +11,13 @@
 import md from "markdown-it";
 
 definePageMeta({
-  layout: "posts",
+  layout: "article",
 });
 
 const route = useRoute();
 
 const { data } = await useFetch(
-  `/api/post_content?doc_path=${(route.params.doc_path as string[]).join("/")}`
+  `/api/article/detail?id=${route.params.id as string}`
 );
 
 useHead({
@@ -29,13 +29,13 @@ const content = computed(() => {
 });
 
 const createdAt = computed(() => {
-  if (!data.value?.createdAt) return "";
-  return new Date(data.value.createdAt).toLocaleString();
+  if (!data.value?.created_at) return "";
+  return new Date(data.value.created_at).toLocaleString();
 });
 
 const latestModifiedAt = computed(() => {
-  if (!data.value?.latestModifiedAt) return "";
-  return new Date(data.value.latestModifiedAt).toLocaleString();
+  if (!data.value?.updated_at) return "";
+  return new Date(data.value.updated_at).toLocaleString();
 });
 </script>
 
