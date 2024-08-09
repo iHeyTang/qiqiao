@@ -9,6 +9,12 @@
  * ---------------------------------------------------------------
  */
 
+export interface OssCredentials {
+  AccessKeyId: string;
+  AccessKeySecret: string;
+  SecurityToken: string;
+}
+
 export interface PaginationDTO {
   pageSize: number;
   current: number;
@@ -198,6 +204,21 @@ export class HttpClient<SecurityDataType = unknown> {
  */
 export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDataType> {
   api = {
+    /**
+     * No description
+     *
+     * @name OssControllerCredentials
+     * @request GET:/api/oss/credentials
+     * @response `200` `OssCredentials`
+     */
+    ossControllerCredentials: (params: RequestParams = {}) =>
+      this.request<OssCredentials, any>({
+        path: `/api/oss/credentials`,
+        method: "GET",
+        format: "json",
+        ...params,
+      }),
+
     /**
      * No description
      *

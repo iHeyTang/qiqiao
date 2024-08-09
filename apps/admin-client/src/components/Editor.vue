@@ -3,6 +3,8 @@
 </template>
 
 <script lang="ts" setup>
+import CryptoJS from "crypto-js";
+import { oss } from "@/api";
 import Vditor from "vditor";
 import "vditor/dist/index.css";
 import { onMounted, onUnmounted, ref, watch } from "vue";
@@ -30,6 +32,24 @@ onMounted(() => {
     outline: {
       enable: true,
       position: "right",
+    },
+    upload: {
+      accept: "image/*",
+      handler: async (files) => {
+        for (const file of files) {
+          const arrayBuffer = await file.arrayBuffer();
+          const wordArray = CryptoJS.lib.WordArray.create(arrayBuffer);
+          const hash = CryptoJS.MD5(wordArray).toString();
+          const filename = `images/${hash}.${file.name.split(".").pop()}`;
+
+          const ossClient = await oss();
+          const res = await ossClient.put(filename, file);
+          vditor.value?.insertValue(
+            `![${res.name}](${res.url}?x-oss-process=image/resize,h_100,limit_0)`
+          );
+        }
+        return null;
+      },
     },
   });
 });
