@@ -4,8 +4,6 @@ import BaseLayout from "./layouts/base-layout.vue";
 
 <template>
   <BaseLayout>
-    <main>
-      <RouterView />
-    </main>
+    <RouterView />
   </BaseLayout>
 </template>

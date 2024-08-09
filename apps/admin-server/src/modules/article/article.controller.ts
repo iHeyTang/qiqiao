@@ -48,6 +48,22 @@ class ArticlePageResultDTO extends WithPaginationDTO {
   list: ArticleListItemDTO[];
 }
 
+class ArticleCreateResultDTO {
+  @ApiProperty()
+  id: string;
+
+  @ApiProperty()
+  created_at: string;
+}
+
+class ArticleEditResultDTO {
+  @ApiProperty()
+  id: string;
+
+  @ApiProperty()
+  updated_at: string;
+}
+
 class ArticleCreateDTO {
   @ApiProperty()
   title: string;
@@ -94,7 +110,10 @@ export class ArticleController {
   }
 
   @Post('/')
-  async create(@Body() body: ArticleCreateDTO): Promise<void> {
+  @ApiOkResponse({ type: ArticleCreateResultDTO })
+  async create(
+    @Body() body: ArticleCreateDTO,
+  ): Promise<ArticleCreateResultDTO> {
     return this.articleService.createArticle(body);
   }
 
@@ -104,10 +123,11 @@ export class ArticleController {
   }
 
   @Put('/:id')
+  @ApiOkResponse({ type: ArticleEditResultDTO })
   async edit(
     @Param('id') id: number,
     @Body() body: ArticleEditDTO,
-  ): Promise<void> {
+  ): Promise<ArticleEditResultDTO> {
     return this.articleService.editArticle(id, body);
   }
 }

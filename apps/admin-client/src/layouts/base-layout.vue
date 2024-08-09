@@ -52,7 +52,7 @@ watchEffect(() => {
   padding: 20px;
   position: sticky;
   top: 0;
-  z-index: 100;
+  z-index: 10;
   background-color: white;
 }
 </style>

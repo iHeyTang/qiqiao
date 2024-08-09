@@ -24,6 +24,7 @@ export class ArticleService {
 
     const list = await pg('sys_articles')
       .select('id', 'title', 'created_at', 'updated_at')
+      .orderBy('updated_at', 'desc')
       .limit(pagination.pageSize)
       .offset((pagination.current - 1) * pagination.pageSize);
     return { list, total: Number(total.count) };
@@ -52,13 +53,16 @@ export class ArticleService {
    * @param body
    */
   async createArticle(body: { title: string; content: string }) {
-    await pg('sys_articles').insert({
-      ...body,
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-      created_by: '',
-      updated_by: '',
-    });
+    const res = await pg('sys_articles')
+      .insert({
+        ...body,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        created_by: '',
+        updated_by: '',
+      })
+      .returning(['id', 'created_at']);
+    return res[0];
   }
 
   /**
@@ -69,14 +73,16 @@ export class ArticleService {
   async editArticle(
     id: number,
     data: Partial<Pick<Article, 'title' | 'content'>>,
-  ): Promise<void> {
+  ): Promise<Pick<Article, 'id' | 'updated_at'>> {
     const updateData = pick(data, ['title', 'content']);
-    await pg('sys_articles')
+    const res = await pg('sys_articles')
       .where('id', id)
       .update({
         ...updateData,
         updated_at: new Date().toISOString(),
         updated_by: '',
-      });
+      })
+      .returning(['id', 'updated_at']);
+    return res[0];
   }
 }

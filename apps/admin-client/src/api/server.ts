@@ -40,9 +40,19 @@ export interface ArticleCreateDTO {
   content: string;
 }
 
+export interface ArticleCreateResultDTO {
+  id: string;
+  created_at: string;
+}
+
 export interface ArticleEditDTO {
   title: string;
   content: string;
+}
+
+export interface ArticleEditResultDTO {
+  id: string;
+  updated_at: string;
 }
 
 import type { AxiosInstance, AxiosRequestConfig, AxiosResponse, HeadersDefaults, ResponseType } from "axios";
@@ -215,14 +225,15 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      *
      * @name ArticleControllerCreate
      * @request POST:/api/article
-     * @response `201` `void`
+     * @response `200` `ArticleCreateResultDTO`
      */
     articleControllerCreate: (data: ArticleCreateDTO, params: RequestParams = {}) =>
-      this.request<void, any>({
+      this.request<ArticleCreateResultDTO, any>({
         path: `/api/article`,
         method: "POST",
         body: data,
         type: ContentType.Json,
+        format: "json",
         ...params,
       }),
 
@@ -260,14 +271,15 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      *
      * @name ArticleControllerEdit
      * @request PUT:/api/article/{id}
-     * @response `200` `void`
+     * @response `200` `ArticleEditResultDTO`
      */
     articleControllerEdit: (id: number, data: ArticleEditDTO, params: RequestParams = {}) =>
-      this.request<void, any>({
+      this.request<ArticleEditResultDTO, any>({
         path: `/api/article/${id}`,
         method: "PUT",
         body: data,
         type: ContentType.Json,
+        format: "json",
         ...params,
       }),
   };

@@ -1,7 +1,6 @@
 import { createWebHistory, createRouter, RouteRecordRaw } from "vue-router";
 import ArticleList from "@/pages/article/list.vue";
 import ArticleEdit from "@/pages/article/edit.vue";
-import ArticleNew from "@/pages/article/new.vue";
 
 type RouteConfig = RouteRecordRaw & {
   meta?: {
@@ -23,14 +22,6 @@ export const routes: RouteConfig[] = [
     component: ArticleList,
     meta: {
       title: "Articles",
-    },
-  },
-  {
-    path: "/article/new",
-    component: ArticleNew,
-    meta: {
-      hideInMenu: true,
-      title: "New Article",
     },
   },
   {

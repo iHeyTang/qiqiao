@@ -7,7 +7,11 @@
     :data="data?.data.list || []"
     style="width: 100%"
   >
-    <el-table-column prop="title" label="标题" />
+    <el-table-column prop="title" label="标题">
+      <template #default="{ row }">
+        {{ row.title || "未命名文章" }}
+      </template>
+    </el-table-column>
     <el-table-column prop="updated_at" label="最近更新时间" width="180">
       <template #default="{ row }">
         {{
@@ -62,8 +66,15 @@ const handleClickRefresh = () => {
   refreshList();
 };
 
+const { run: handleCommitNew } = useRequest(api.api.articleControllerCreate, {
+  manual: true,
+  onSuccess: (res) => {
+    router.push(`/article/edit/${res.data.id}`);
+  },
+});
+
 const handleClickNew = () => {
-  router.push("/article/new");
+  handleCommitNew({ title: "", content: "" });
 };
 
 const handleClickEdit = (id: string) => {

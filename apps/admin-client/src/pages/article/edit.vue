@@ -1,23 +1,35 @@
 <template>
-  <el-form :model="form" :rules="rules" label-width="80px">
-    <el-form-item label="标题" prop="title">
-      <el-input v-model="form.title" />
-    </el-form-item>
-    <el-form-item label="内容" prop="content">
-      <el-input v-model="form.content" type="textarea" />
-    </el-form-item>
-    <el-form-item>
-      <el-button type="primary" @click="handleSubmit(id, form)">提交</el-button>
-    </el-form-item>
-  </el-form>
+  <div style="margin-bottom: 4px">
+    <div style="display: flex; gap: 20px; align-items: center">
+      <el-input
+        v-model="form.title"
+        placeholder="请输入标题"
+        size="large"
+        style="font-size: 20px; font-weight: bold"
+      />
+      <el-button @click="handleUpdateSubmit(id, form)">保存</el-button>
+    </div>
+    <div style="font-size: 12px">
+      <div v-if="updateLoading">自动保存中...</div>
+      <div v-else>
+        最近更新:
+        {{
+          updateResult?.data.updated_at &&
+          dayjs(updateResult?.data.updated_at).format("YYYY-MM-DD HH:mm:ss")
+        }}
+      </div>
+    </div>
+  </div>
+  <Editor v-model="form.content" />
 </template>
 
 <script lang="ts" setup>
 import { api } from "@/api";
 import { useRouter } from "vue-router";
-import { reactive, ref } from "vue";
+import Editor from "@/components/Editor.vue";
+import { reactive, ref, watch } from "vue";
 import { useRequest } from "vue-request";
-import { ElMessage } from "element-plus";
+import { dayjs } from "element-plus";
 
 const router = useRouter();
 const id = ref(Number(router.currentRoute.value.params.id as string));
@@ -25,11 +37,6 @@ const form = reactive({
   title: "",
   content: "",
 });
-
-const rules = {
-  title: [{ required: true, message: "请输入标题", trigger: "blur" }],
-  content: [{ required: true, message: "请输入内容", trigger: "blur" }],
-};
 
 useRequest(api.api.articleControllerDetail, {
   refreshDeps: [id],
@@ -40,10 +47,17 @@ useRequest(api.api.articleControllerDetail, {
   },
 });
 
-const { run: handleSubmit } = useRequest(api.api.articleControllerEdit, {
-  manual: true,
-  onSuccess: () => {
-    ElMessage("编辑成功");
+const {
+  data: updateResult,
+  run: handleUpdateSubmit,
+  loading: updateLoading,
+} = useRequest(api.api.articleControllerEdit, { manual: true });
+
+watch(
+  form,
+  () => {
+    handleUpdateSubmit(id.value, form);
   },
-});
+  { deep: true }
+);
 </script>
