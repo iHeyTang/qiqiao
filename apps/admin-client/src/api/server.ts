@@ -24,8 +24,12 @@ export interface PaginationDTO {
 export interface ArticleListItemDTO {
   id: string;
   title: string;
+  /** @format date-time */
   created_at: string;
+  /** @format date-time */
   updated_at: string;
+  /** @format date-time */
+  published_at: string;
 }
 
 export interface ArticlePageResultDTO {
@@ -36,9 +40,13 @@ export interface ArticlePageResultDTO {
 export interface ArticleDetailDTO {
   id: string;
   title: string;
+  /** @format date-time */
   created_at: string;
+  /** @format date-time */
   updated_at: string;
   content: string;
+  /** @format date-time */
+  published_at: string;
 }
 
 export interface ArticleCreateDTO {
@@ -48,6 +56,7 @@ export interface ArticleCreateDTO {
 
 export interface ArticleCreateResultDTO {
   id: string;
+  /** @format date-time */
   created_at: string;
 }
 
@@ -58,6 +67,7 @@ export interface ArticleEditDTO {
 
 export interface ArticleEditResultDTO {
   id: string;
+  /** @format date-time */
   updated_at: string;
 }
 
@@ -301,6 +311,34 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         body: data,
         type: ContentType.Json,
         format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name ArticleControllerPublish
+     * @request PUT:/api/article/{id}/publish
+     * @response `200` `void`
+     */
+    articleControllerPublish: (id: number, params: RequestParams = {}) =>
+      this.request<void, any>({
+        path: `/api/article/${id}/publish`,
+        method: "PUT",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name ArticleControllerUnpublish
+     * @request PUT:/api/article/{id}/unpublish
+     * @response `200` `void`
+     */
+    articleControllerUnpublish: (id: number, params: RequestParams = {}) =>
+      this.request<void, any>({
+        path: `/api/article/${id}/unpublish`,
+        method: "PUT",
         ...params,
       }),
   };

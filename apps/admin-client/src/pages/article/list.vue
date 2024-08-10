@@ -9,21 +9,22 @@
   >
     <el-table-column prop="title" label="标题">
       <template #default="{ row }">
-        {{ row.title || "未命名文章" }}
+        <div style="display: flex; align-items: center; gap: 8px">
+          <el-tooltip content="当前有内容已保存，但未发布。" placement="top">
+            <Dot v-if="row.updated_at !== row.published_at"></Dot>
+          </el-tooltip>
+          <span>{{ row.title || "未命名文章" }}</span>
+        </div>
       </template>
     </el-table-column>
     <el-table-column prop="updated_at" label="最近更新时间" width="180">
       <template #default="{ row }">
-        {{
-          row.updated_at && dayjs(row.updated_at).format("YYYY-MM-DD HH:mm:ss")
-        }}
+        {{ dayjs(row.updated_at).format("YYYY-MM-DD HH:mm:ss") }}
       </template>
     </el-table-column>
     <el-table-column prop="created_at" label="创建时间" width="180">
       <template #default="{ row }">
-        {{
-          row.updated_at && dayjs(row.updated_at).format("YYYY-MM-DD HH:mm:ss")
-        }}
+        {{ dayjs(row.updated_at).format("YYYY-MM-DD HH:mm:ss") }}
       </template>
     </el-table-column>
     <el-table-column width="160">
@@ -48,6 +49,7 @@
 
 <script lang="ts" setup>
 import { api } from "@/api";
+import Dot from "@/components/Dot.vue";
 import { dayjs, ElMessage, ElPopconfirm } from "element-plus";
 import { useRequest } from "vue-request";
 import { useRouter } from "vue-router";

@@ -8,6 +8,7 @@
         style="font-size: 20px; font-weight: bold"
       />
       <el-button @click="handleUpdateSubmit(id, form)">保存</el-button>
+      <el-button @click="handlePublishSubmit(id)">发布</el-button>
     </div>
     <div style="font-size: 12px">
       <div v-if="updateLoading">自动保存中...</div>
@@ -29,7 +30,7 @@ import { useRouter } from "vue-router";
 import Editor from "@/components/Editor.vue";
 import { reactive, ref, watch } from "vue";
 import { useRequest } from "vue-request";
-import { dayjs } from "element-plus";
+import { dayjs, ElMessage } from "element-plus";
 
 const router = useRouter();
 const id = ref(Number(router.currentRoute.value.params.id as string));
@@ -52,6 +53,16 @@ const {
   run: handleUpdateSubmit,
   loading: updateLoading,
 } = useRequest(api.api.articleControllerEdit, { manual: true });
+
+const { run: handlePublishSubmit } = useRequest(
+  api.api.articleControllerPublish,
+  {
+    manual: true,
+    onSuccess: () => {
+      ElMessage("发布成功");
+    },
+  }
+);
 
 watch(
   form,

@@ -20,10 +20,13 @@ class ArticleListItemDTO {
   title: string;
 
   @ApiProperty()
-  created_at: string;
+  created_at: Date;
 
   @ApiProperty()
-  updated_at: string;
+  updated_at: Date;
+
+  @ApiProperty()
+  published_at: Date;
 }
 
 class ArticleDetailDTO {
@@ -34,13 +37,16 @@ class ArticleDetailDTO {
   title: string;
 
   @ApiProperty()
-  created_at: string;
+  created_at: Date;
 
   @ApiProperty()
-  updated_at: string;
+  updated_at: Date;
 
   @ApiProperty()
   content: string;
+
+  @ApiProperty()
+  published_at: Date;
 }
 
 class ArticlePageResultDTO extends WithPaginationDTO {
@@ -53,7 +59,7 @@ class ArticleCreateResultDTO {
   id: string;
 
   @ApiProperty()
-  created_at: string;
+  created_at: Date;
 }
 
 class ArticleEditResultDTO {
@@ -61,7 +67,7 @@ class ArticleEditResultDTO {
   id: string;
 
   @ApiProperty()
-  updated_at: string;
+  updated_at: Date;
 }
 
 class ArticleCreateDTO {
@@ -129,5 +135,15 @@ export class ArticleController {
     @Body() body: ArticleEditDTO,
   ): Promise<ArticleEditResultDTO> {
     return this.articleService.editArticle(id, body);
+  }
+
+  @Put('/:id/publish')
+  async publish(@Param('id') id: number): Promise<void> {
+    return this.articleService.publishArticle(id);
+  }
+
+  @Put('/:id/unpublish')
+  async unpublish(@Param('id') id: number): Promise<void> {
+    return this.articleService.unpublishArticle(id);
   }
 }

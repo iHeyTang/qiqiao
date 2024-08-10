@@ -16,7 +16,10 @@ export class ArticleService extends BaseService {
       current: number;
     };
   }): Promise<{
-    list: Pick<Article, 'id' | 'title' | 'created_at' | 'updated_at'>[];
+    list: Pick<
+      Article,
+      'id' | 'title' | 'created_at' | 'updated_at' | 'published_at'
+    >[];
     total: number;
   }> {
     const { pagination } = params;
@@ -24,7 +27,7 @@ export class ArticleService extends BaseService {
     const total = await this.knex('sys_articles').count('id').first();
 
     const list = await this.knex('sys_articles')
-      .select('id', 'title', 'created_at', 'updated_at')
+      .select('id', 'title', 'created_at', 'updated_at', 'published_at')
       .orderBy('updated_at', 'desc')
       .limit(pagination.pageSize)
       .offset((pagination.current - 1) * pagination.pageSize);
@@ -57,8 +60,8 @@ export class ArticleService extends BaseService {
     const res = await this.knex('sys_articles')
       .insert({
         ...body,
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
+        created_at: new Date(),
+        updated_at: new Date(),
         created_by: '',
         updated_by: '',
       })
@@ -75,15 +78,71 @@ export class ArticleService extends BaseService {
     id: number,
     data: Partial<Pick<Article, 'title' | 'content'>>,
   ): Promise<Pick<Article, 'id' | 'updated_at'>> {
+    const origin = await this.knex('sys_articles')
+      .where('id', id)
+      .select('id', 'updated_at', 'title', 'content')
+      .first();
+
     const updateData = pick(data, ['title', 'content']);
+    if (
+      updateData.title === origin.title &&
+      updateData.content === origin.content
+    ) {
+      return {
+        id: origin.id,
+        updated_at: origin.updated_at,
+      };
+    }
     const res = await this.knex('sys_articles')
       .where('id', id)
       .update({
         ...updateData,
-        updated_at: new Date().toISOString(),
+        updated_at: new Date(),
         updated_by: '',
       })
       .returning(['id', 'updated_at']);
     return res[0];
+  }
+
+  /**
+   * 发布文章
+   * @param id
+   */
+  async publishArticle(id: number) {
+    const article = await this.knex('sys_articles')
+      .where('id', id)
+      .select('title', 'content')
+      .first();
+
+    if (article === undefined) {
+      throw new Error('文章不存在');
+    }
+    if (article.title === '' || article.content === '') {
+      throw new Error('文章标题和内容不能为空');
+    }
+
+    await this.knex('sys_articles').where('id', id).update({
+      published_by: '',
+      published_at: new Date(),
+      published_title: article.title,
+      published_content: article.content,
+      updated_at: new Date(),
+      updated_by: '',
+    });
+  }
+
+  /**
+   * 下架已发布的文章
+   * @param id
+   */
+  async unpublishArticle(id: number) {
+    await this.knex('sys_articles').where('id', id).update({
+      published_by: '',
+      published_at: null,
+      published_title: '',
+      published_content: '',
+      updated_at: new Date(),
+      updated_by: '',
+    });
   }
 }
