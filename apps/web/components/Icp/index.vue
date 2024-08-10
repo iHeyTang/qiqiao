@@ -7,7 +7,11 @@
       style="color: #69db7c"
       href="http://beian.miit.gov.cn/"
     >
-      浙ICP备0000000000号
+      {{ icpNo }}
     </a>
   </div>
 </template>
+
+<script setup lang="ts">
+const icpNo = process.env.PUBLIC_WEB_ICP_NO;
+</script>

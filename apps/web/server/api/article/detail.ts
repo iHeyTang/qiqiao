@@ -18,5 +18,6 @@ export default defineEventHandler(async (event) => {
       "created_by",
       "updated_by"
     )
+    .whereNotNull("published_at")
     .first();
 });
