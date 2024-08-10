@@ -1,4 +1,4 @@
-import { pg } from "@qiqiao/dao";
+import { knex } from "~/server/dao";
 
 /**
  * 获取文章详情
@@ -7,7 +7,7 @@ export default defineEventHandler(async (event) => {
   const url = getRequestURL(event);
   const articleId = url.searchParams.get("id");
   if (!articleId) return;
-  return await pg("sys_articles")
+  return await knex("sys_articles")
     .where({ id: articleId })
     .select(
       "id",

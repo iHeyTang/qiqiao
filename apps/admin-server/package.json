@@ -27,7 +27,9 @@
     "@nestjs/platform-express": "^10.0.0",
     "@nestjs/swagger": "^7.4.0",
     "@qiqiao/dao": "*",
+    "@qiqiao/nestjs-ali-oss": "*",
     "ali-oss": "^6.20.0",
+    "nest-knexjs": "^0.0.23",
     "reflect-metadata": "^0.2.0",
     "rxjs": "^7.8.1"
   },

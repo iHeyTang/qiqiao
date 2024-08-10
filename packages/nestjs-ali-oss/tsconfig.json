@@ -1,0 +1,10 @@
+{
+  "extends": "@qiqiao/typescript-config/dao-library.json",
+  "compilerOptions": {
+    "outDir": "dist",
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true
+  },
+  "include": ["src"],
+  "exclude": ["node_modules", "dist"]
+}

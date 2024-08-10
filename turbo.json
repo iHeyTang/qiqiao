@@ -1,5 +1,6 @@
 {
   "$schema": "https://turbo.build/schema.json",
+  "globalEnv": ["SECRET_DAO_KNEX_CONNECTION"],
   "ui": "stream",
   "tasks": {
     "build": {
