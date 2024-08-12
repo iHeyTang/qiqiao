@@ -1,5 +1,5 @@
 {
-  "extends": "@qiqiao/typescript-config/dao-library.json",
+  "extends": "@qiqiao/typescript-config/library.json",
   "compilerOptions": {
     "outDir": "dist",
     "experimentalDecorators": true,

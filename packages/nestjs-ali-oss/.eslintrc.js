@@ -1,7 +1,7 @@
 /** @type {import("eslint").Linter.Config} */
 module.exports = {
   root: true,
-  extends: ["@qiqiao/eslint-config/dao-internal.js"],
+  extends: ["@qiqiao/eslint-config/library.js"],
   parser: "@typescript-eslint/parser",
   parserOptions: {
     project: "./tsconfig.lint.json",

@@ -1,5 +1,5 @@
 {
   "$schema": "https://json.schemastore.org/tsconfig",
-  "display": "Dao Library",
+  "display": "Library",
   "extends": "./base.json"
 }
