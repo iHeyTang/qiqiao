@@ -46,7 +46,7 @@ jobs:
 
       - name: Log in to Docker Hub
         run: |
-          echo ${{ secrets.DOCKER_PASSWORD }} | docker login ${{ secrets.DOCKER_REPO_ADDRESS }} -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
+          docker login ${{ secrets.DOCKER_REPO_ADDRESS }} -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
 
   push:
     environment: deploy
@@ -65,7 +65,7 @@ jobs:
       - name: Deploy Docker Image on Aliyun
         run: |
           ssh -i ${{ secrets.ALIYUN_SSH_KEY }} ${{ secrets.ALIYUN_USER }}@${{ secrets.ALIYUN_IP }}
-          echo ${{ secrets.DOCKER_PASSWORD }} | docker login ${{ secrets.DOCKER_REPO_ADDRESS }} -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
+          docker login ${{ secrets.DOCKER_REPO_ADDRESS }} -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
           docker run \
           -d \
           --name qiqiao \
