@@ -52,7 +52,7 @@ jobs:
     steps:
       - name: Push Docker Image
         env:
-          TIMESTAMP: ${{ needs.pre.outputs.TIMESTAMP }}
+          TIMESTAMP: ${{ needs.pre.outputs.timestamp }}
         run: |
           docker build . -t ${{ env.WEBAPP_NAME }}:${{ env.TIMESTAMP }}
           docker login ${{ secrets.DOCKER_REPO_ADDRESS }} -u ${{ secrets.DOCKER_LOGIN_USERNAME }} -p ${{ secrets.DOCKER_LOGIN_PASSWORD }}
@@ -66,7 +66,7 @@ jobs:
     steps:
       - name: Deploy Docker Image on Aliyun
         env:
-          TIMESTAMP: ${{ needs.pre.outputs.TIMESTAMP }}
+          TIMESTAMP: ${{ needs.pre.outputs.timestamp }}
         run: |
           ssh -i ${{ secrets.ALIYUN_SSH_KEY }} ${{ secrets.ALIYUN_USER }}@${{ secrets.ALIYUN_IP }}
           docker login ${{ secrets.DOCKER_REPO_ADDRESS }} -u ${{ secrets.DOCKER_LOGIN_USERNAME }} -p ${{ secrets.DOCKER_LOGIN_PASSWORD }}
