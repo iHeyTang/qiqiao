@@ -51,11 +51,13 @@ jobs:
     needs: [pre, build]
     steps:
       - name: Push Docker Image
+        env:
+          TIMESTAMP: ${{ needs.pre.outputs.TIMESTAMP }}
         run: |
-          docker build . -t ${{ env.WEBAPP_NAME }}:${{ needs.pre.outputs.TIMESTAMP }}
+          docker build . -t ${{ env.WEBAPP_NAME }}:${{ env.TIMESTAMP }}
           docker login ${{ secrets.DOCKER_REPO_ADDRESS }} -u ${{ secrets.DOCKER_LOGIN_USERNAME }} -p ${{ secrets.DOCKER_LOGIN_PASSWORD }}
-          docker tag ${{ env.WEBAPP_NAME }}:${{ needs.pre.outputs.TIMESTAMP }} ${{ secrets.DOCKER_REPO_ADDRESS }}/${{ secrets.DOCKER_USERNAME }}/${{ env.WEBAPP_NAME }}:${{ needs.pre.outputs.TIMESTAMP }}
-          docker push ${{ secrets.DOCKER_REPO_ADDRESS }}/${{ secrets.DOCKER_USERNAME }}/${{ env.WEBAPP_NAME }}:${{ needs.pre.outputs.TIMESTAMP }}
+          docker tag ${{ env.WEBAPP_NAME }}:${{ env.TIMESTAMP }} ${{ secrets.DOCKER_REPO_ADDRESS }}/${{ secrets.DOCKER_USERNAME }}/${{ env.WEBAPP_NAME }}:${{ env.TIMESTAMP }}
+          docker push ${{ secrets.DOCKER_REPO_ADDRESS }}/${{ secrets.DOCKER_USERNAME }}/${{ env.WEBAPP_NAME }}:${{ env.TIMESTAMP }}
 
   deploy:
     environment: deploy
@@ -63,6 +65,8 @@ jobs:
     needs: [pre, push]
     steps:
       - name: Deploy Docker Image on Aliyun
+        env:
+          TIMESTAMP: ${{ needs.pre.outputs.TIMESTAMP }}
         run: |
           ssh -i ${{ secrets.ALIYUN_SSH_KEY }} ${{ secrets.ALIYUN_USER }}@${{ secrets.ALIYUN_IP }}
           docker login ${{ secrets.DOCKER_REPO_ADDRESS }} -u ${{ secrets.DOCKER_LOGIN_USERNAME }} -p ${{ secrets.DOCKER_LOGIN_PASSWORD }}
@@ -74,4 +78,4 @@ jobs:
           -e SECRET_ADMIN_SERVER_ALIYUN_STS_ACCESS_KEY_ID=${{ secrets.SECRET_ADMIN_SERVER_ALIYUN_STS_ACCESS_KEY_ID }} \
           -e SECRET_ADMIN_SERVER_ALIYUN_STS_ACCESS_KEY_SECRET=${{ secrets.SECRET_ADMIN_SERVER_ALIYUN_STS_ACCESS_KEY_SECRET }} \
           -e SECRET_ADMIN_SERVER_ALIYUN_STS_ACCESS_ROLE_ARN=${{ secrets.SECRET_ADMIN_SERVER_ALIYUN_STS_ACCESS_ROLE_ARN }} \
-          ${{ secrets.DOCKER_REPO_ADDRESS }}/${{ secrets.DOCKER_USERNAME }}/${{ env.WEBAPP_NAME }}:${{ needs.pre.outputs.TIMESTAMP }}
+          ${{ secrets.DOCKER_REPO_ADDRESS }}/${{ secrets.DOCKER_USERNAME }}/${{ env.WEBAPP_NAME }}:${{ env.TIMESTAMP }}
