@@ -47,7 +47,7 @@ jobs:
         with:
           host: ${{ secrets.ALIYUN_IP }}
           username: ${{ secrets.ALIYUN_USER }}
-          key: ${{ secrets.ALIYUN_SSH_KEY }}
+          password: ${{ secrets.ALIYUN_PASSWORD }}
           script: |
             docker login ${{ secrets.DOCKER_REPO_ADDRESS }} -u ${{ secrets.DOCKER_LOGIN_USERNAME }} -p ${{ secrets.DOCKER_LOGIN_PASSWORD }}
             docker run \
