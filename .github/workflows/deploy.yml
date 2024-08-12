@@ -1,0 +1,63 @@
+name: Deploy to Web App
+
+on:
+  push:
+    branches: ["main"]
+  workflow_dispatch:
+
+env:
+  WEBAPP_NAME: qiqiao # set this to your application's name
+  AZURE_WEBAPP_PACKAGE_PATH: "." # set this to the path to your web app project, defaults to the repository root
+  NODE_VERSION: "20.x" # set this to the node version to use
+  TIMESTAMP: ""
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Get current timestamp
+        id: get-timestamp
+        run: echo "TIMESTAMP=$(date +%Y%m%d%H%M%S)" >> $GITHUB_ENV
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "yarn"
+
+      - name: yarn install, build, and test
+        run: |
+          yarn
+          yarn run build --if-present
+          yarn run test --if-present
+
+      - name: Build Docker Image
+        run: |
+          docker build . -t ${{ secrets.DOCKER_REPO_ADDRESS }}/${{ secrets.DOCKER_USERNAME }}/${{ env.WEBAPP_NAME }}:${{ env.TIMESTAMP }}
+
+      - name: Log in to Docker Hub
+        run: |
+          echo ${{ secrets.DOCKER_PASSWORD }} | docker login ${{ secrets.DOCKER_REPO_ADDRESS }} -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
+
+      - name: Push Docker Image
+        run: |
+          docker push ${{ secrets.DOCKER_REPO_ADDRESS }}/${{ secrets.DOCKER_USERNAME }}/${{ env.WEBAPP_NAME }}:${{ env.TIMESTAMP }}
+
+      - name: Deploy Docker Image on Aliyun
+        run: |
+          ssh -i ${{ secrets.ALIYUN_SSH_KEY }} ${{ secrets.ALIYUN_USER }}@${{ secrets.ALIYUN_IP }}
+          echo ${{ secrets.DOCKER_PASSWORD }} | docker login ${{ secrets.DOCKER_REPO_ADDRESS }} -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
+          docker run \
+          -d \
+          --name qiqiao \
+          -p 8080:8080 3000:3000 \
+          -e SECRET_DAO_KNEX_CONNECTION=${{ secrets.SECRET_DAO_KNEX_CONNECTION }} \
+          -e SECRET_ADMIN_SERVER_ALIYUN_STS_ACCESS_KEY_ID=${{ secrets.SECRET_ADMIN_SERVER_ALIYUN_STS_ACCESS_KEY_ID }} \
+          -e SECRET_ADMIN_SERVER_ALIYUN_STS_ACCESS_KEY_SECRET=${{ secrets.SECRET_ADMIN_SERVER_ALIYUN_STS_ACCESS_KEY_SECRET }} \
+          -e SECRET_ADMIN_SERVER_ALIYUN_STS_ACCESS_ROLE_ARN=${{ secrets.SECRET_ADMIN_SERVER_ALIYUN_STS_ACCESS_ROLE_ARN }} \
+          ${{ secrets.DOCKER_REPO_ADDRESS }}/${{ secrets.DOCKER_USERNAME }}/${{ env.WEBAPP_NAME }}:${{ env.TIMESTAMP }}
