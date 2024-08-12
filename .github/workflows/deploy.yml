@@ -40,14 +40,6 @@ jobs:
           yarn build
           yarn run prune
 
-      - name: Build Docker Image
-        run: |
-          docker build . -t ${{ secrets.DOCKER_REPO_ADDRESS }}/${{ secrets.DOCKER_USERNAME }}/${{ env.WEBAPP_NAME }}:${{ env.TIMESTAMP }}
-
-      - name: Log in to Docker Hub
-        run: |
-          docker login ${{ secrets.DOCKER_REPO_ADDRESS }} -u ${{ secrets.DOCKER_LOGIN_USERNAME }} -p ${{ secrets.DOCKER_LOGIN_PASSWORD }}
-
   push:
     environment: deploy
     runs-on: ubuntu-latest
@@ -55,6 +47,9 @@ jobs:
     steps:
       - name: Push Docker Image
         run: |
+          docker build . -t ${{ env.WEBAPP_NAME }}:${{ env.TIMESTAMP }}
+          docker login ${{ secrets.DOCKER_REPO_ADDRESS }} -u ${{ secrets.DOCKER_LOGIN_USERNAME }} -p ${{ secrets.DOCKER_LOGIN_PASSWORD }}
+          docker tag ${{ env.WEBAPP_NAME }}:${{ env.TIMESTAMP }} ${{ secrets.DOCKER_REPO_ADDRESS }}/${{ secrets.DOCKER_USERNAME }}/${{ env.WEBAPP_NAME }}:${{ env.TIMESTAMP }}
           docker push ${{ secrets.DOCKER_REPO_ADDRESS }}/${{ secrets.DOCKER_USERNAME }}/${{ env.WEBAPP_NAME }}:${{ env.TIMESTAMP }}
 
   deploy:
