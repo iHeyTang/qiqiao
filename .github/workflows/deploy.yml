@@ -35,26 +35,13 @@ jobs:
           yarn build
           yarn run prune
 
-  push:
-    environment: deploy
-    runs-on: ubuntu-latest
-    needs: [build]
-    steps:
-      - name: Check Dockerfile exists
-        run: |
-          if [ ! -f Dockerfile ]; then echo "Dockerfile not found"; exit 1; fi
       - name: Push Docker Image
         run: |
-          docker build . -f Dockerfile -t ${{ env.WEBAPP_NAME }}:${{ github.run_id }}
+          docker build . -t ${{ env.WEBAPP_NAME }}:${{ github.run_id }}
           docker login ${{ secrets.DOCKER_REPO_ADDRESS }} -u ${{ secrets.DOCKER_LOGIN_USERNAME }} -p ${{ secrets.DOCKER_LOGIN_PASSWORD }}
           docker tag ${{ env.WEBAPP_NAME }}:${{ github.run_id }} ${{ secrets.DOCKER_REPO_ADDRESS }}/${{ secrets.DOCKER_USERNAME }}/${{ env.WEBAPP_NAME }}:${{ github.run_id }}
           docker push ${{ secrets.DOCKER_REPO_ADDRESS }}/${{ secrets.DOCKER_USERNAME }}/${{ env.WEBAPP_NAME }}:${{ github.run_id }}
 
-  deploy:
-    environment: deploy
-    runs-on: ubuntu-latest
-    needs: [push]
-    steps:
       - name: Deploy Docker Image on Aliyun
         run: |
           ssh -i ${{ secrets.ALIYUN_SSH_KEY }} ${{ secrets.ALIYUN_USER }}@${{ secrets.ALIYUN_IP }}
