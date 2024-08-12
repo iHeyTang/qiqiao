@@ -42,20 +42,20 @@ jobs:
           docker tag ${{ env.WEBAPP_NAME }}:${{ github.run_id }} ${{ secrets.DOCKER_REPO_ADDRESS }}/${{ secrets.DOCKER_USERNAME }}/${{ env.WEBAPP_NAME }}:${{ github.run_id }}
           docker push ${{ secrets.DOCKER_REPO_ADDRESS }}/${{ secrets.DOCKER_USERNAME }}/${{ env.WEBAPP_NAME }}:${{ github.run_id }}
 
-      - name: Deploy to Aliyun Server
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.ALIYUN_IP }}
-          username: ${{ secrets.ALIYUN_USER }}
-          key: ${{ secrets.ALIYUN_SSH_KEY }}
-          script: |
-            docker login ${{ secrets.DOCKER_REPO_ADDRESS }} -u ${{ secrets.DOCKER_LOGIN_USERNAME }} -p ${{ secrets.DOCKER_LOGIN_PASSWORD }}
-            docker run \
-            -d \
-            --name qiqiao \
-            -p 8080:8080 3000:3000 \
-            -e SECRET_DAO_KNEX_CONNECTION=${{ secrets.SECRET_DAO_KNEX_CONNECTION }} \
-            -e SECRET_ADMIN_SERVER_ALIYUN_STS_ACCESS_KEY_ID=${{ secrets.SECRET_ADMIN_SERVER_ALIYUN_STS_ACCESS_KEY_ID }} \
-            -e SECRET_ADMIN_SERVER_ALIYUN_STS_ACCESS_KEY_SECRET=${{ secrets.SECRET_ADMIN_SERVER_ALIYUN_STS_ACCESS_KEY_SECRET }} \
-            -e SECRET_ADMIN_SERVER_ALIYUN_STS_ACCESS_ROLE_ARN=${{ secrets.SECRET_ADMIN_SERVER_ALIYUN_STS_ACCESS_ROLE_ARN }} \
-            ${{ secrets.DOCKER_REPO_ADDRESS }}/${{ secrets.DOCKER_USERNAME }}/${{ env.WEBAPP_NAME }}:${{ github.run_id }}
+      - name: Deploy Docker Image on Aliyun
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.ALIYUN_SSH_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan ${{ secrets.ALIYUN_IP }} >> ~/.ssh/known_hosts
+          ssh -i ~/.ssh/id_rsa ${{ secrets.ALIYUN_USER }}@${{ secrets.ALIYUN_IP }}
+          docker login ${{ secrets.DOCKER_REPO_ADDRESS }} -u ${{ secrets.DOCKER_LOGIN_USERNAME }} -p ${{ secrets.DOCKER_LOGIN_PASSWORD }}
+          docker run \
+          -d \
+          --name qiqiao \
+          -p 8080:8080 3000:3000 \
+          -e SECRET_DAO_KNEX_CONNECTION=${{ secrets.SECRET_DAO_KNEX_CONNECTION }} \
+          -e SECRET_ADMIN_SERVER_ALIYUN_STS_ACCESS_KEY_ID=${{ secrets.SECRET_ADMIN_SERVER_ALIYUN_STS_ACCESS_KEY_ID }} \
+          -e SECRET_ADMIN_SERVER_ALIYUN_STS_ACCESS_KEY_SECRET=${{ secrets.SECRET_ADMIN_SERVER_ALIYUN_STS_ACCESS_KEY_SECRET }} \
+          -e SECRET_ADMIN_SERVER_ALIYUN_STS_ACCESS_ROLE_ARN=${{ secrets.SECRET_ADMIN_SERVER_ALIYUN_STS_ACCESS_ROLE_ARN }} \
+          ${{ secrets.DOCKER_REPO_ADDRESS }}/${{ secrets.DOCKER_USERNAME }}/${{ env.WEBAPP_NAME }}:${{ github.run_id }}
