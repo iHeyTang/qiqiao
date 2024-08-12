@@ -9,24 +9,14 @@ env:
   WEBAPP_NAME: qiqiao # set this to your application's name
   AZURE_WEBAPP_PACKAGE_PATH: "." # set this to the path to your web app project, defaults to the repository root
   NODE_VERSION: "20.x" # set this to the node version to use
-  TIMESTAMP: ""
 
 permissions:
   contents: read
 
 jobs:
-  pre:
-    runs-on: ubuntu-latest
-    outputs:
-      timestamp: ${{ steps.get-timestamp.outputs.TIMESTAMP }}
-    steps:
-      - name: Get current timestamp
-        id: get-timestamp
-        run: echo "TIMESTAMP=$(date +%Y%m%d%H%M%S)" >> $GITHUB_ENV
   build:
     environment: deploy
     runs-on: ubuntu-latest
-    needs: pre
     steps:
       - uses: actions/checkout@v4
 
@@ -48,25 +38,21 @@ jobs:
   push:
     environment: deploy
     runs-on: ubuntu-latest
-    needs: [pre, build]
+    needs: [build]
     steps:
       - name: Push Docker Image
-        env:
-          TIMESTAMP: ${{ needs.pre.outputs.timestamp }}
         run: |
-          docker build . -t ${{ env.WEBAPP_NAME }}:${{ env.TIMESTAMP }}
+          docker build . -t ${{ env.WEBAPP_NAME }}:${{ github.run_id }}
           docker login ${{ secrets.DOCKER_REPO_ADDRESS }} -u ${{ secrets.DOCKER_LOGIN_USERNAME }} -p ${{ secrets.DOCKER_LOGIN_PASSWORD }}
-          docker tag ${{ env.WEBAPP_NAME }}:${{ env.TIMESTAMP }} ${{ secrets.DOCKER_REPO_ADDRESS }}/${{ secrets.DOCKER_USERNAME }}/${{ env.WEBAPP_NAME }}:${{ env.TIMESTAMP }}
-          docker push ${{ secrets.DOCKER_REPO_ADDRESS }}/${{ secrets.DOCKER_USERNAME }}/${{ env.WEBAPP_NAME }}:${{ env.TIMESTAMP }}
+          docker tag ${{ env.WEBAPP_NAME }}:${{ github.run_id }} ${{ secrets.DOCKER_REPO_ADDRESS }}/${{ secrets.DOCKER_USERNAME }}/${{ env.WEBAPP_NAME }}:${{ github.run_id }}
+          docker push ${{ secrets.DOCKER_REPO_ADDRESS }}/${{ secrets.DOCKER_USERNAME }}/${{ env.WEBAPP_NAME }}:${{ github.run_id }}
 
   deploy:
     environment: deploy
     runs-on: ubuntu-latest
-    needs: [pre, push]
+    needs: [push]
     steps:
       - name: Deploy Docker Image on Aliyun
-        env:
-          TIMESTAMP: ${{ needs.pre.outputs.timestamp }}
         run: |
           ssh -i ${{ secrets.ALIYUN_SSH_KEY }} ${{ secrets.ALIYUN_USER }}@${{ secrets.ALIYUN_IP }}
           docker login ${{ secrets.DOCKER_REPO_ADDRESS }} -u ${{ secrets.DOCKER_LOGIN_USERNAME }} -p ${{ secrets.DOCKER_LOGIN_PASSWORD }}
@@ -78,4 +64,4 @@ jobs:
           -e SECRET_ADMIN_SERVER_ALIYUN_STS_ACCESS_KEY_ID=${{ secrets.SECRET_ADMIN_SERVER_ALIYUN_STS_ACCESS_KEY_ID }} \
           -e SECRET_ADMIN_SERVER_ALIYUN_STS_ACCESS_KEY_SECRET=${{ secrets.SECRET_ADMIN_SERVER_ALIYUN_STS_ACCESS_KEY_SECRET }} \
           -e SECRET_ADMIN_SERVER_ALIYUN_STS_ACCESS_ROLE_ARN=${{ secrets.SECRET_ADMIN_SERVER_ALIYUN_STS_ACCESS_ROLE_ARN }} \
-          ${{ secrets.DOCKER_REPO_ADDRESS }}/${{ secrets.DOCKER_USERNAME }}/${{ env.WEBAPP_NAME }}:${{ env.TIMESTAMP }}
+          ${{ secrets.DOCKER_REPO_ADDRESS }}/${{ secrets.DOCKER_USERNAME }}/${{ env.WEBAPP_NAME }}:${{ github.run_id }}
