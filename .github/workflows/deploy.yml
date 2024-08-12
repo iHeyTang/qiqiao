@@ -44,7 +44,11 @@ jobs:
 
       - name: Deploy Docker Image on Aliyun
         run: |
-          ssh -i ${{ secrets.ALIYUN_SSH_KEY }} ${{ secrets.ALIYUN_USER }}@${{ secrets.ALIYUN_IP }}
+          mkdir -p ~/.ssh
+          echo "${{ secrets.ALIYUN_SSH_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan ${{ secrets.ALIYUN_IP }} >> ~/.ssh/known_hosts
+          ssh -i ~/.ssh/id_rsa ${{ secrets.ALIYUN_USER }}@${{ secrets.ALIYUN_IP }}
           docker login ${{ secrets.DOCKER_REPO_ADDRESS }} -u ${{ secrets.DOCKER_LOGIN_USERNAME }} -p ${{ secrets.DOCKER_LOGIN_PASSWORD }}
           docker run \
           -d \
