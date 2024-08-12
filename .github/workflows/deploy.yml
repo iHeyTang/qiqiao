@@ -35,9 +35,10 @@ jobs:
         run: |
           yarn
 
-      - name: yarn build
+      - name: yarn build & prune
         run: |
           yarn build
+          yarn run prune
 
       - name: Build Docker Image
         run: |
