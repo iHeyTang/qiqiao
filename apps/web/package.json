@@ -20,9 +20,9 @@
     "@types/markdown-it": "^14.1.1",
     "markdown-it": "^14.1.0",
     "nuxt": "^3.12.3",
-    "vue": "latest"
+    "vue": "^3.4.31"
   },
   "devDependencies": {
-    "@types/node": "^20.14.10"
+    "@types/node": "^22.1.0"
   }
 }

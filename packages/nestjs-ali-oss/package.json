@@ -11,7 +11,7 @@
   "dependencies": {},
   "devDependencies": {
     "@nestjs/common": "^10.0.0",
-    "@nestjs/core": "10.0.0",
+    "@nestjs/core": "^10.0.0",
     "@qiqiao/eslint-config": "*",
     "@qiqiao/typescript-config": "*",
     "@types/node": "^22.1.0"
