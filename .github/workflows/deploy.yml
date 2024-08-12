@@ -40,6 +40,9 @@ jobs:
     runs-on: ubuntu-latest
     needs: [build]
     steps:
+      - name: Check Dockerfile exists
+        run: |
+          if [ ! -f Dockerfile ]; then echo "Dockerfile not found"; exit 1; fi
       - name: Push Docker Image
         run: |
           docker build . -f Dockerfile -t ${{ env.WEBAPP_NAME }}:${{ github.run_id }}
