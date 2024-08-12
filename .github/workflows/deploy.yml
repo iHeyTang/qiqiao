@@ -17,6 +17,8 @@ permissions:
 jobs:
   pre:
     runs-on: ubuntu-latest
+    outputs:
+      timestamp: ${{ steps.get-timestamp.outputs.TIMESTAMP }}
     steps:
       - name: Get current timestamp
         id: get-timestamp
