@@ -34,7 +34,10 @@ jobs:
         run: |
           yarn build
           yarn run prune
-
+  push:
+    environment: deploy
+    runs-on: ubuntu-latest
+    steps:
       - name: Push Docker Image
         run: |
           docker build . -t ${{ env.WEBAPP_NAME }}:${{ github.run_id }}
@@ -42,6 +45,10 @@ jobs:
           docker tag ${{ env.WEBAPP_NAME }}:${{ github.run_id }} ${{ secrets.DOCKER_REPO_ADDRESS }}/${{ secrets.DOCKER_USERNAME }}/${{ env.WEBAPP_NAME }}:${{ github.run_id }}
           docker push ${{ secrets.DOCKER_REPO_ADDRESS }}/${{ secrets.DOCKER_USERNAME }}/${{ env.WEBAPP_NAME }}:${{ github.run_id }}
 
+  deploy:
+    environment: deploy
+    runs-on: ubuntu-latest
+    steps:
       - name: Deploy to Aliyun Server
         uses: appleboy/ssh-action@master
         with:
