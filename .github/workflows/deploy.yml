@@ -35,6 +35,7 @@ jobs:
           yarn build
           yarn run prune
   push:
+    needs: build
     environment: deploy
     runs-on: ubuntu-latest
     steps:
@@ -46,6 +47,7 @@ jobs:
           docker push ${{ secrets.DOCKER_REPO_ADDRESS }}/${{ secrets.DOCKER_USERNAME }}/${{ env.WEBAPP_NAME }}:${{ github.run_id }}
 
   deploy:
+    needs: push
     environment: deploy
     runs-on: ubuntu-latest
     steps:
