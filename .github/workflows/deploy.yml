@@ -38,7 +38,7 @@ jobs:
       - name: Push Docker Image
         run: |
           docker build . -t ${{ env.WEBAPP_NAME }}:${{ github.run_id }}
-          docker login ${{ secrets.DOCKER_REPO_ADDRESS }} -u ${{ secrets.DOCKER_LOGIN_USERNAME }} --password-stdin ${{ secrets.DOCKER_LOGIN_PASSWORD }}
+          docker login ${{ secrets.DOCKER_REPO_ADDRESS }} -u ${{ secrets.DOCKER_LOGIN_USERNAME }} -p ${{ secrets.DOCKER_LOGIN_PASSWORD }}
           docker tag ${{ env.WEBAPP_NAME }}:${{ github.run_id }} ${{ secrets.DOCKER_REPO_ADDRESS }}/${{ secrets.DOCKER_USERNAME }}/${{ env.WEBAPP_NAME }}:${{ github.run_id }}
           docker push ${{ secrets.DOCKER_REPO_ADDRESS }}/${{ secrets.DOCKER_USERNAME }}/${{ env.WEBAPP_NAME }}:${{ github.run_id }}
 
