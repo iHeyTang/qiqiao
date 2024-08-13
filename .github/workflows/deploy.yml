@@ -58,7 +58,7 @@ jobs:
             sudo docker run \
             -d \
             --name qiqiao \
-            -p 8080:8080 3000:3000 \
+            -p 8080:8080 -p 3000:3000 \
             -e SECRET_DAO_KNEX_CONNECTION=${{ secrets.SECRET_DAO_KNEX_CONNECTION }} \
             -e SECRET_ADMIN_SERVER_ALIYUN_STS_ACCESS_KEY_ID=${{ secrets.SECRET_ADMIN_SERVER_ALIYUN_STS_ACCESS_KEY_ID }} \
             -e SECRET_ADMIN_SERVER_ALIYUN_STS_ACCESS_KEY_SECRET=${{ secrets.SECRET_ADMIN_SERVER_ALIYUN_STS_ACCESS_KEY_SECRET }} \
