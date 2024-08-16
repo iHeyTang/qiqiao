@@ -1,6 +1,7 @@
 import { createWebHistory, createRouter, RouteRecordRaw } from "vue-router";
 import ArticleList from "@/pages/article/list.vue";
 import ArticleEdit from "@/pages/article/edit.vue";
+import Login from "@/pages/login/login.vue";
 
 type RouteConfig = RouteRecordRaw & {
   meta?: {
@@ -13,6 +14,13 @@ export const routes: RouteConfig[] = [
   {
     path: "/",
     redirect: "/article/list",
+    meta: {
+      hideInMenu: true,
+    },
+  },
+  {
+    path: "/login",
+    component: Login,
     meta: {
       hideInMenu: true,
     },

@@ -10,11 +10,6 @@ export interface User extends BaseWithAudit {
    * 密码哈希
    */
   password: string;
-
-  /**
-   * 密码盐
-   */
-  salt: string;
 }
 
 declare module "knex/types/tables" {

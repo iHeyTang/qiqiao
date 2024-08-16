@@ -7,6 +7,7 @@
     "dev": "ts-node ./src/index.ts"
   },
   "dependencies": {
+    "swagger-typescript-api": "^13.0.21",
     "@element-plus/icons-vue": "^2.3.1",
     "axios": "^1.7.3"
   },

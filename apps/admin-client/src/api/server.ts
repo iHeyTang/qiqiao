@@ -71,6 +71,15 @@ export interface ArticleEditResultDTO {
   updated_at: string;
 }
 
+export interface LoginDTO {
+  username: string;
+  password: string;
+}
+
+export interface LoginResultDTO {
+  access_token: string;
+}
+
 import type { AxiosInstance, AxiosRequestConfig, AxiosResponse, HeadersDefaults, ResponseType } from "axios";
 import axios from "axios";
 
@@ -339,6 +348,39 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       this.request<void, any>({
         path: `/api/article/${id}/unpublish`,
         method: "PUT",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name AuthControllerLogin
+     * @request POST:/api/auth/login
+     * @response `200` `LoginResultDTO`
+     */
+    authControllerLogin: (data: LoginDTO, params: RequestParams = {}) =>
+      this.request<LoginResultDTO, any>({
+        path: `/api/auth/login`,
+        method: "POST",
+        body: data,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name AuthControllerInitAdmin
+     * @request POST:/api/auth/init-admin
+     * @response `200` `void`
+     */
+    authControllerInitAdmin: (data: LoginDTO, params: RequestParams = {}) =>
+      this.request<void, any>({
+        path: `/api/auth/init-admin`,
+        method: "POST",
+        body: data,
+        type: ContentType.Json,
         ...params,
       }),
   };

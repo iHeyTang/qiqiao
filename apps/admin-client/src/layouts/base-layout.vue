@@ -1,11 +1,14 @@
 <template>
-  <el-container class="base-layout">
+  <el-container
+    class="base-layout"
+    v-if="activeRoute.path !== '/' && activeRoute.path !== '/login'"
+  >
     <el-aside>
       <div class="menu-head">
         <el-avatar size="default" style="margin-right: 20px" />
         Qiqiao
       </div>
-      <el-menu router :default-active="activeRoute.fullPath">
+      <el-menu router :default-active="activeRoute.path">
         <template v-for="route in $router.getRoutes()" :key="route.path">
           <el-sub-menu
             v-if="route.children && route.children.length"
@@ -26,6 +29,9 @@
     </el-aside>
     <el-main><slot name="default"></slot></el-main>
   </el-container>
+  <template v-else>
+    <slot name="default"></slot>
+  </template>
 </template>
 
 <script lang="ts" setup>

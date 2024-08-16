@@ -7,10 +7,12 @@ import {
   Post,
   Put,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { ArticleService } from './article.service';
 import { ApiOkResponse, ApiProperty } from '@nestjs/swagger';
 import { WithPaginationDTO } from 'src/common/openapi';
+import { AuthGuard } from '../auth/auth.guard';
 
 class ArticleListItemDTO {
   @ApiProperty()
@@ -87,6 +89,7 @@ class ArticleEditDTO {
 }
 
 @Controller({ path: 'article' })
+@UseGuards(AuthGuard)
 export class ArticleController {
   constructor(private readonly articleService: ArticleService) {}
 
